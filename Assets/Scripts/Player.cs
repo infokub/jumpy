@@ -11,6 +11,7 @@ public class Player : MonoBehaviour
     float gravity;
     bool isFloored;
     Rigidbody rb;
+    Animator animCtrl;
 
 
     // Start is called before the first frame update
@@ -19,6 +20,9 @@ public class Player : MonoBehaviour
         vspeed = 0;
         isFloored = true;
         rb = GetComponent<Rigidbody>();
+
+        animCtrl = GetComponentInChildren<Animator>();
+        animCtrl.SetBool("running", true);
     }
 
     // Update is called once per frame
@@ -29,6 +33,7 @@ public class Player : MonoBehaviour
             vspeed = JumpDefinition.InitSpeed(maxHeight, maxLength, Runner.instance.speed);
             gravity = JumpDefinition.Gravity(maxHeight, maxLength, Runner.instance.speed);
             isFloored = false;
+            animCtrl.SetTrigger("jump");
         }
     }
 
@@ -49,6 +54,7 @@ public class Player : MonoBehaviour
         {
             vspeed = 0;
             isFloored = true;
+            animCtrl.SetTrigger("grounded");
         }
     }
 
@@ -57,7 +63,14 @@ public class Player : MonoBehaviour
         if (other.transform.CompareTag("Hit"))
         {
             if (!Runner.instance.Hit())
+            {
                 enabled = false;
+                animCtrl.SetBool("running", false);
+            }
+            else
+            {
+                animCtrl.SetTrigger("contact");
+            }
         }
     }
 }
